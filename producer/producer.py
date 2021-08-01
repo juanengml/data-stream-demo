@@ -7,7 +7,7 @@ from console_logging.console import Console
 console = Console()
 
 ## conecta com rabbit 
-conn = Connection('amqp://guest:guest@http://ec2-3-139-68-72.us-east-2.compute.amazonaws.com/:5672//')
+conn = Connection('amqp://guest:guest@ec2-3-139-68-72.us-east-2.compute.amazonaws.com:5672//')
 
 # define nosso canal
 channel = conn.channel()
@@ -36,14 +36,14 @@ def data_iris():
 
 ## funcao que pega os dados da funcao e publica no rabbit
 def job():
-  for p in range(10000000): 
-	       data = data_iris()
+  for p in range(1000): 
+         data = data_iris()
          producer.publish(data,serializer='pickle',compression='bzip2',routing_key=_routing_key)
          console.info(data)
 
 
 ## a cada 5 min dispara o job
-schedule.every(5).minutes.do(job)
+schedule.every(1).minutes.do(job)
 
 ## função main 
 def main():
