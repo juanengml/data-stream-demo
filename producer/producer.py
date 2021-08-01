@@ -36,13 +36,10 @@ def data_iris():
 
 ## funcao que pega os dados da funcao e publica no rabbit
 def job():
-    for p in range(10000000): 
-	            data = data_iris()
-              producer.publish(data,
-                               serializer='pickle', 
-                               compression='bzip2',
-                               routing_key=_routing_key)
-              console.info(data)
+  for p in range(10000000): 
+	       data = data_iris()
+         producer.publish(data,serializer='pickle',compression='bzip2',routing_key=_routing_key)
+         console.info(data)
 
 
 ## a cada 5 min dispara o job
