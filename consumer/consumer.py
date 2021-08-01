@@ -19,11 +19,15 @@ _routing_key = "routing-key-adress"
 
 #endpoint_db  = "mysql://root:asdqwe123@192.168.0.17:49153/clients"
 
-endpoint_db = "mongodb://192.168.0.17:49154/"
+endpoint_db = "mongodb://192.168.0.17:49155/"
 
 #db = dataset.connect(endpoint_db)
 
 client = MongoClient(endpoint_db)
+
+db = client['iris_database']
+
+tabela = db['iris_tabela']
 
 class Worker(ConsumerMixin):
     def __init__(self, connection, queues):
@@ -35,17 +39,9 @@ class Worker(ConsumerMixin):
                          callbacks=[self.on_message], accept=['json', 'pickle', 'msgpack', 'yaml'] )]
 
     def on_message(self, body, message):
-        #print(body)
-        try:
-           db = client['user-address-database']
-           posts = db.posts
-           console.info(posts.insert_one(body).inserted_id)
-           #tabela  = db['user_address']
-           #tabela.insert(body)
-           console.success("INSERT DATA")
+           print(body)
+           print(tabela.insert_one(body))
            message.ack()
-        except:
-           pass
 
 def run():
     print("[*] CONSUMER APP rabbitMQ ")

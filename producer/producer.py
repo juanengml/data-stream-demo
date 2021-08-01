@@ -1,11 +1,10 @@
 import streamlit as st 
 from requests import get 
-import pandas as pd 
-from kombu import Connection
-from kombu import Exchange
-from kombu import Producer
-from kombu import Queue
+import pandas as pd
+from random import choice
+from kombu import Connection, Exchange, Producer, Queue
 from console_logging.console import Console
+
 console = Console()
 
 console.log("PRODUCER APP....")
@@ -30,16 +29,28 @@ endpoint = "https://random-data-api.com/api/address/random_address"
 
 data = {"size":100}
 
+df = pd.read_csv("https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv")
+
+def data_iris():
+    
+  data = {"sepal_length": choice(df['sepal_length'].tolist()),
+        "sepal_width":  choice(df['sepal_width'].tolist()), 
+        "petal_length": choice(df['petal_length'].tolist()),
+        "petal_width":  choice(df['petal_width'].tolist())
+       }
+  return data
+
+
 def main():
     while True:
-           try:
-              r = get(endpoint,data,verify=True).json() 
-              for i in r:
-                #console.info(i)
-                print(i['id'])
-                producer.publish(i,serializer='pickle', compression='bzip2', routing_key=_routing_key)
-           except:
-              pass 
+           #try:
+              #r = get(endpoint,data,verify=True).json() 
+              #for p in r:
+              data = data_iris()
+              producer.publish(data,serializer='pickle', compression='bzip2', routing_key=_routing_key)
+              print(data)
+           #except:
+           #   pass 
 
 
 if __name__ == "__main__":
