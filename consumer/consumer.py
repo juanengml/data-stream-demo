@@ -6,27 +6,14 @@ from kombu.mixins import ConsumerMixin
 from datetime import datetime as dt
 import json
 from console_logging.console import Console
+
 console = Console()
-
 console.log("CONSUMER STARTING....")
-
-
-rabbit_url = "amqp://guest:guest@192.168.0.17:5672//"
-
-_exchange = "data-adress-exchange"
-_queue = "data-adress-queue"
-_routing_key = "routing-key-adress"
-
-#endpoint_db  = "mysql://root:asdqwe123@192.168.0.17:49153/clients"
-
-endpoint_db = "mongodb://192.168.0.17:49155/"
-
-#db = dataset.connect(endpoint_db)
+rabbit_url = "amqp://guest:guest@ec2-3-139-68-72.us-east-2.compute.amazonaws.com:5672//"
+endpoint_db = "mongodb://ec2-3-139-68-72.us-east-2.compute.amazonaws.com:49153/"
 
 client = MongoClient(endpoint_db)
-
 db = client['iris_database']
-
 tabela = db['iris_tabela']
 
 class Worker(ConsumerMixin):
@@ -39,19 +26,15 @@ class Worker(ConsumerMixin):
                          callbacks=[self.on_message], accept=['json', 'pickle', 'msgpack', 'yaml'] )]
 
     def on_message(self, body, message):
-           print(body)
-           print(tabela.insert_one(body))
+           console.log(body)
+           console.info(tabela.insert_one(body).inserted_id)
            message.ack()
 
 def run():
-    print("[*] CONSUMER APP rabbitMQ ")
-
-    exchange = Exchange(_exchange, type="direct")
-
-    queues = [Queue(_queue, exchange, routing_key="video")]
-
-    print("[*] WORKER RUNNING  ")
-
+    console.log("[*] CONSUMER APP rabbitMQ ")
+    exchange = Exchange("data-adress-exchange", type="direct")
+    queues = [Queue("data-adress-queue", exchange,routing_key="routing-key-adress")]
+    console.log("[*] WORKER RUNNING  ")
     with Connection(rabbit_url, heartbeat=40) as conn:
             worker = Worker(conn, queues)
             print("[*] WORKER RUN RABBIT LOADING...")
