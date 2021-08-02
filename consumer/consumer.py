@@ -13,8 +13,8 @@ rabbit_url = "amqp://guest:guest@ec2-3-139-68-72.us-east-2.compute.amazonaws.com
 endpoint_db = "mongodb://ec2-3-139-68-72.us-east-2.compute.amazonaws.com:49153/"
 
 client = MongoClient(endpoint_db)
-db = client['iris_database']
-tabela = db['iris_tabela']
+db = client['users_database']
+tabela = db['users_tabela']
 
 class Worker(ConsumerMixin):
     def __init__(self, connection, queues):

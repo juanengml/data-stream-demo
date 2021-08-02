@@ -3,5 +3,5 @@ pandas
 numpy
 kombu
 console_logging
-
+requests
 

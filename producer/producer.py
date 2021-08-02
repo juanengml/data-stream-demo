@@ -3,6 +3,7 @@ import pandas as pd
 from random import choice
 from kombu import Connection, Exchange, Producer, Queue
 from console_logging.console import Console
+from requests import get 
 
 console = Console()
 
@@ -23,17 +24,13 @@ queue = Queue(name="data-adress-queue", exchange=exchange, routing_key=_routing_
 queue.maybe_bind(conn)
 queue.declare()
 
-# le nossa dataset 
-df = pd.read_csv("https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv")
+# le nosso endpoint 
+endpoint = "https://random-data-api.com/api/users/random_user"
+data = {"size":100}
 
-## função que gera pega os dados das colunas da base iris.csv
+## função que gera pega os dados das colunas da base  
 def data_iris():
-  return  {"sepal_length": choice(df['sepal_length'].tolist()),
-          "sepal_width":  choice(df['sepal_width'].tolist()), 
-          "petal_length": choice(df['petal_length'].tolist()),
-          "petal_width":  choice(df['petal_width'].tolist())
-       }
-
+  return get(endpoint,data).json()
 ## funcao que pega os dados da funcao e publica no rabbit
 def job():
   for p in range(1000): 
