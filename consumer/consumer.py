@@ -27,7 +27,7 @@ class Worker(ConsumerMixin):
 
     def on_message(self, body, message):
            console.log(body)
-           console.info(tabela.insert_one(body).inserted_id)
+           console.info(tabela.insert_many(body))
            message.ack()
 
 def run():
